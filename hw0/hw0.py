@@ -6,8 +6,9 @@ conf = SparkConf()
 sc = SparkContext(conf=conf)
 lines = sc.textFile(sys.argv[1])
 
-# split with space, and filter non-word
+# split with space, remove duplication, and filter non-word
 words = lines.flatMap(lambda l: re.split(r'[^\w]+', l)) \
+        .distinct() \
         .filter(lambda chunk: len(chunk) > 0)
 
 # Take first letter from words with lower letter, and check it is alphabet
