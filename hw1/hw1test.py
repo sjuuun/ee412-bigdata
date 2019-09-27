@@ -6,25 +6,21 @@ conf = SparkConf()
 sc = SparkContext(conf=conf)
 lines = sc.textFile(sys.argv[1])
 
-def make_pair(x):
+def divide(x):
 	result = [];    
 	for i in x[1]:
-		if i > x[0]:
-			result.append((x[0], i));
+		result.append((i, x[0]));
 	return result
 
-split = lines.map(lambda l: re.split(r'\t', l)) \
+pairs = lines.map(lambda l: re.split(r'\t', l)) \
         .filter(lambda l: len(l) > 1) \
         .map(lambda s: (s[0], re.split(r',', s[1]))) \
-	.filter(lambda s: len(s[1]) > 1) \
-	
-pairs = split.flatMap(make_pair) \
-	.collect()
+	.flatMap(divide)
 
-#pair_list = pairs.collect()
+pair_list = pairs.collect()
 
-#common = pairs.groupByKey() \
-#         .mapValues(list)
+common = pairs.groupByKey() \
+         .mapValues(list)
 
 def make_interest(x):
 	people = x[1]
@@ -34,8 +30,8 @@ def make_interest(x):
 			result.append((people[i], people[j]))
 	return result	
 
-interest = split.flatMap(make_interest) \
-           .filter(lambda p: not (p in pairs)) \
+interest = common.flatMap(make_interest) \
+           .filter(lambda p: not (p in pair_list)) \
            .map(lambda p: (p, 1)) \
            .reduceByKey(lambda n1, n2: n1 + n2) \
            .sortByKey()
