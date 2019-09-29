@@ -1,5 +1,6 @@
 import re
 import sys
+import numpy as np
 
 f = open(sys.argv[1], 'r')
 lines = f.readlines()
@@ -55,7 +56,7 @@ print freqList
 
 
 numFreq = len(freqList)
-freqPair = [0] * (numFreq * (numFreq - 1) / 2)
+freqPair = np.zeros((numFreq, numFreq))
 
 def findIndex(i, j):
     return (i - 1) * (numFreq - (i/2)) + j - i
@@ -64,13 +65,12 @@ for line in lineInt:
     for i in range(len(line)):
         for j in range(i+1, len(line)):
             if (line[i] in freqList) and (line[j] in freqList):
-                ind1 = freqList.index(line[i]) + 1
-                ind2 = freqList.index(line[j]) + 1
+                ind1 = freqList.index(line[i])
+                ind2 = freqList.index(line[j])
                 if ind1 < ind2:
-                    index = findIndex(ind1, ind2)
+                    freqPair[ind1][ind2] = freqPair[ind1][ind2] + 1
                 else:
-                    index = findIndex(ind2, ind1)
-                freqPair[index - 1] += 1
+                    freqPair[ind2][ind1] = freqPair[ind2][ind1] + 1
 
 print "\nThis is freqPair\n"
 print freqPair
@@ -85,3 +85,12 @@ def pairIndex(x):
         iter = iter + i
         row += 1
 """
+
+for i in range(2):
+    ind1, ind2 = np.unravel_index(freqPair.argmax(), freqPair.shape)
+    count = freqPair[ind1][ind2]
+    freqPair[ind1][ind2] = 0
+    item1 = itemList[freqList[ind1]]
+    item2 = itemList[freqList[ind2]]
+    
+    print "%s\t%s\t%d" % (item1, item2, count)
