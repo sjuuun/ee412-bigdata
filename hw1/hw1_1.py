@@ -32,13 +32,14 @@ def count_common(n1, n2):
 
 pairs = split.flatMap(make_pair) \
         .reduceByKey(count_common) \
-        .filter(lambda p: p[1] != 0) \
-        .sortByKey()
+        .filter(lambda p: p[1] != 0)
 
 final = pairs.map(lambda x: (x[1], x[0])) \
         .sortByKey(False) \
+        .map(lambda x: (x[1], x[0])) \
         .take(10)
 
+final = final.sort()
 #print "Final"
 #print final
 
