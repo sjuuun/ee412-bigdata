@@ -8,7 +8,6 @@ lines = f.readlines()
 new_lines = []
 article_ID = []
 shingle_list = []
-char_matrix = np.zeros((0,0))
 k = 3
 
 # make shingle_list for all lines
@@ -27,7 +26,7 @@ print shingle_list
 
 # make Characteristic matrix
 num_shingle = len(shingle_list)
-char_matrix = np.zeros((num_shingle, num_shingle))
+char_matrix = np.zeros((num_shingle, len(article_ID)))
 
 num_line = 0
 for line in new_lines:
@@ -38,3 +37,22 @@ for line in new_lines:
 
 print "This is characteristic matrix"
 print char_matrix
+
+# return smallest prime number larger than or equal to n
+def prime_num(n):
+    while True:
+        isprime = True
+        for i in range(2, int(n ** 0.5) + 1):
+            if (n % i) == 0:
+                isprime = False
+                break
+        if isprime:
+            return n
+        n += 1
+
+# return random number for hash functions
+def hash_gen(c):
+    return random.randint(0,c-1), random.randint(0,c-1)
+
+# make signature matrix
+#sig_matrix = np.zeros((120, len(article_ID)))
