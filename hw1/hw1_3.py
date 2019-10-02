@@ -1,5 +1,6 @@
 import re
 import sys
+import random
 import numpy as np
 
 f = open(sys.argv[1], 'r')
@@ -27,7 +28,7 @@ print shingle_list
 # make Characteristic matrix
 num_article = len(article_ID)
 num_shingle = len(shingle_list)
-char_matrix = np.zeros((num_shingle, num_article)
+char_matrix = np.zeros((num_shingle, num_article))
 
 num_line = 0
 for line in new_lines:
@@ -63,7 +64,7 @@ for i in range(120):
     for j in range(num_shingle):
         hash_matrix[j][i] = (a*j + b) % c
 
-#print hash_matrix 
+print hash_matrix 
 
 # make signature matrix
 sig_matrix = np.full((120, num_article), np.inf)
@@ -75,3 +76,11 @@ for i in range(num_shingle):
                     sig_matrix[k][j] = hash_matrix[i][k]
 
 print sig_matrix
+
+# make band for LSH algorithm
+b = 6
+r = 20
+for i in range(1):
+    band = sig_matrix[:][i*r:(i+1)*r]
+
+print band
