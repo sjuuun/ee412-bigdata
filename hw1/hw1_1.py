@@ -9,9 +9,6 @@ lines = sc.textFile(sys.argv[1])
 
 split = lines.map(lambda l: re.split(r'\t|,', l)) \
         .filter(lambda l: l[-1] != '')
- 
-#print "This is split"
-#print split.collect()
 
 def make_pair(x):
     who = x[0]
@@ -33,26 +30,12 @@ pairs = split.flatMap(make_pair) \
         .reduceByKey(count_common) \
         .filter(lambda p: p[1] != 0)
 
-
 final = pairs.takeOrdered(10, key = lambda x: -x[1])
-        #map(lambda x: (x[1], x[0])) \
-        #.sortByKey(False) \
-        #.take(10)
-        #.map(lambda x: (x[1], x[0])) \
-        #.collect()
-        #.take(10)
 
-"""
-final = []
-for i in top10:
-    final.append((i[1], i[0]))
-"""
-
-final.sort()
-#print "Final"
-#print final
+final.sort(key = lambda pair: (-pair[1], pair[0]))
 
 for i in final:
 	print "%s\t%s\t%d" % (i[0][0], i[0][1], i[1])
+
 
 sc.stop()
