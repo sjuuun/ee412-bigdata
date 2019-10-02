@@ -11,6 +11,7 @@ article_ID = []
 shingle_list = []
 k = 3
 
+
 # make shingle_list for all lines
 for line in lines:
     ID , text = line.split(" ", 1)
@@ -22,8 +23,6 @@ for line in lines:
         shingle_list.append(text[i:i+3])
     shingle_list = list(set(shingle_list))
 
-print "This is shingle"
-print shingle_list
 
 # make Characteristic matrix
 num_article = len(article_ID)
@@ -37,8 +36,6 @@ for line in new_lines:
             char_matrix[i][num_line] = 1
     num_line += 1
 
-print "This is characteristic matrix"
-print char_matrix
 
 # return smallest prime number larger than or equal to n
 def prime_num(n):
@@ -52,9 +49,11 @@ def prime_num(n):
             return n
         n += 1
 
+
 # return random number for hash functions
 def hash_gen(c):
     return random.randint(0,c-1), random.randint(0,c-1)
+
 
 # make hash matrix whose row is shingle and column is hash value
 hash_matrix = np.zeros((num_shingle, 120))
@@ -64,7 +63,6 @@ for i in range(120):
     for j in range(num_shingle):
         hash_matrix[j][i] = (a*j + b) % c
 
-print hash_matrix 
 
 # make signature matrix
 sig_matrix = np.full((120, num_article), np.inf)
@@ -75,7 +73,6 @@ for i in range(num_shingle):
                 if sig_matrix[k][j] > hash_matrix[i][k]:
                     sig_matrix[k][j] = hash_matrix[i][k]
 
-print sig_matrix
 
 # make band for LSH algorithm and add similar pair
 b = 6
@@ -90,6 +87,7 @@ for i in range(b):
                     break
             if l == (r-1):
                 result.append((j,k))
+
 
 # make distinct result, and print it
 result = list(set(result))
