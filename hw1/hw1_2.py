@@ -7,10 +7,14 @@ lines = f.readlines()
 
 lineList = []
 
+# Split all lines where delimiter is non-word.
+# And throw away new-line character.
 for line in lines:
     lineList.append(re.split(r'[^\w]+', line)[:-1])
 
-
+# Add all items in item_List
+# Index of item will be hashed value of it.
+# Finally, make lineInt which is hashed version of input lines
 itemList = []
 lineInt = []
 
@@ -26,7 +30,7 @@ for line in lineList:
         tmp.append(index)
     lineInt.append(tmp)
 
-
+# Count all items.
 numItems = len(itemList)
 frequency = [0] * numItems
 
@@ -34,21 +38,21 @@ for line in lineInt:
     for item in line:
         frequency[item] += 1
 
-
-# Change threshold
+# Filter with threshold
+# Append frequent items in freqList with hashed value.
 threshold = 200
 freqList = []
 for i in range(numItems):
     if frequency[i] >= threshold:
         freqList.append(i)
 
-
+# Print number of frequent items.
 numFreq = len(freqList)
 print numFreq
-freqPair = np.zeros((numFreq, numFreq))
 
-def findIndex(i, j):
-    return (i - 1) * (numFreq - (i/2)) + j - i
+# Make triangular matrix to count frequency of pairs.
+# And count all pairs
+freqPair = np.zeros((numFreq, numFreq))
 
 for line in lineInt:
     for i in range(len(line)):
@@ -61,6 +65,7 @@ for line in lineInt:
                 else:
                     freqPair[ind2][ind1] = freqPair[ind2][ind1] + 1
 
+# Count number of frequent pairs with threshold.
 numPair = 0
 for i in range(numFreq):
     for j in range(i+1, numFreq):
@@ -68,7 +73,7 @@ for i in range(numFreq):
 	    numPair += 1
 print numPair
 
-# Change top number
+# Print top-10 most frequent pairs
 for i in range(10):
     ind1, ind2 = np.unravel_index(freqPair.argmax(), freqPair.shape)
     count = freqPair[ind1][ind2]

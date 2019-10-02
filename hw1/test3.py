@@ -63,3 +63,7 @@ for l in range(3):
 print l
 print r
 print "%d\t%d" % (l, r)
+
+tri = np.full((3,3), np.inf)
+tri = np.triu(tri, 1)
+print tri
