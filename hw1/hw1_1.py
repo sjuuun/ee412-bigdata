@@ -1,6 +1,5 @@
 import re
 import sys
-import numpy as np
 from pyspark import SparkConf, SparkContext
 
 conf = SparkConf()
@@ -34,16 +33,26 @@ pairs = split.flatMap(make_pair) \
         .reduceByKey(count_common) \
         .filter(lambda p: p[1] != 0)
 
-final = pairs.map(lambda x: (x[1], x[0])) \
-        .sortByKey(False) \
-        .map(lambda x: (x[1], x[0])) \
-        .take(10)
 
-final = final.sort()
+final = pairs.takeOrdered(10, key = lambda x: -x[1])
+        #map(lambda x: (x[1], x[0])) \
+        #.sortByKey(False) \
+        #.take(10)
+        #.map(lambda x: (x[1], x[0])) \
+        #.collect()
+        #.take(10)
+
+"""
+final = []
+for i in top10:
+    final.append((i[1], i[0]))
+"""
+
+final.sort()
 #print "Final"
 #print final
 
 for i in final:
-	print "%s\t%s\t%d" % (i[1][0], i[1][1], i[0])
+	print "%s\t%s\t%d" % (i[0][0], i[0][1], i[1])
 
 sc.stop()
