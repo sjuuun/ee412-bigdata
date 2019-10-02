@@ -38,28 +38,3 @@ for line in new_lines:
 
 print "This is characteristic matrix"
 print char_matrix
-
-"""
-while(line != ""):
-    ID , text = line.split(" ", 1)
-    article_ID.append(ID)
-    text = re.sub('[^a-zA-Z\s]', '', text)
-    column = np.zeros((len(shingle_list), 1))
-    col_size = char_matrix.shape[1]
-
-    for i in range(len(text)-k): #len(text)-k
-        shingle = text[i:i+3]
-        index = find_shingle_index(shingle)
-        if (index >= 0):
-            shingle_list[index] = 1
-        else:
-            shingle_list.append(shingle)
-            char_matrix = np.vstack([char_matrix, np.zeros(col_size)])
-            column = np.vstack([column, [1]])
-    char_matrix = np.append(char_matrix, column, axis=1)
-
-print article_ID
-print shingle_list
-print char_matrix
-"""
-
