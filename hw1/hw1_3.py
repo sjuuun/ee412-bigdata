@@ -80,7 +80,17 @@ print sig_matrix
 # make band for LSH algorithm
 b = 6
 r = 20
-for i in range(1):
+result = []
+for i in range(b):
     band = sig_matrix[:][i*r:(i+1)*r]
+    for j in range(num_article):
+        for k in range(j+1, num_article):
+            for l in range(r):
+                if (band[l][j] != band[l][k]):
+                    break
+            if l == (r-1):
+                result.append((j,k))
 
-print band
+result = list(set(result))
+for sim in result:
+    print "%s\t%s" % (article_ID[sim[0]], article_ID[sim[1]])

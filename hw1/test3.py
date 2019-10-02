@@ -54,3 +54,12 @@ for i in range(12):
 print hash_matrix
 
 print np.inf < 3
+
+r = 0
+for l in range(3):
+    if l == 1:
+        break
+    r += l
+print l
+print r
+print "%d\t%d" % (l, r)
