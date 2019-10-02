@@ -77,7 +77,7 @@ for i in range(num_shingle):
 
 print sig_matrix
 
-# make band for LSH algorithm
+# make band for LSH algorithm and add similar pair
 b = 6
 r = 20
 result = []
@@ -91,6 +91,7 @@ for i in range(b):
             if l == (r-1):
                 result.append((j,k))
 
+# make distinct result, and print it
 result = list(set(result))
 for sim in result:
     print "%s\t%s" % (article_ID[sim[0]], article_ID[sim[1]])
