@@ -41,3 +41,16 @@ def hash_gen(x):
 a, b = hash_gen(5)
 print a
 print b
+
+num_shingle = 10
+# make signature matrix
+hash_matrix = np.zeros((num_shingle, 12))
+c = prime_num(num_shingle)
+for i in range(12):
+    a, b = hash_gen(c)
+    for j in range(num_shingle):
+        hash_matrix[j][i] = (a*j + b) % c
+
+print hash_matrix
+
+print np.inf < 3

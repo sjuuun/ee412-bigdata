@@ -25,8 +25,9 @@ print "This is shingle"
 print shingle_list
 
 # make Characteristic matrix
+num_article = len(article_ID)
 num_shingle = len(shingle_list)
-char_matrix = np.zeros((num_shingle, len(article_ID)))
+char_matrix = np.zeros((num_shingle, num_article)
 
 num_line = 0
 for line in new_lines:
@@ -54,5 +55,23 @@ def prime_num(n):
 def hash_gen(c):
     return random.randint(0,c-1), random.randint(0,c-1)
 
+# make hash matrix whose row is shingle and column is hash value
+hash_matrix = np.zeros((num_shingle, 120))
+c = prime_num(num_shingle)
+for i in range(120):
+    a, b = hash_gen(c)
+    for j in range(num_shingle):
+        hash_matrix[j][i] = (a*j + b) % c
+
+#print hash_matrix 
+
 # make signature matrix
-#sig_matrix = np.zeros((120, len(article_ID)))
+sig_matrix = np.full((120, num_article), np.inf)
+for i in range(num_shingle):
+    for j in range(num_article):
+        if char_matrix[i][j] == 1:
+            for k in range(120):
+                if sig_matrix[k][j] > hash_matrix[i][k]:
+                    sig_matrix[k][j] = hash_matrix[i][k]
+
+print sig_matrix
