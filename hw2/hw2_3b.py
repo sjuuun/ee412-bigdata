@@ -27,10 +27,14 @@ print users
 util_matrix = np.zeros((len(users), len(items)))
 for pair in pairs:
     util_matrix[users.index(pair[0])][items.index(pair[1])] = pair[2]
-#print util_matrix
+print util_matrix
+
+# Normalize utility matrix
+for i in range(len(users)):
+    util_matrix[i][:] -= sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i][:])
+print util_matrix
 
 def cosine_distance(a, b):
     assert (len(a) == len(b))
-    return np.sum(np.dot(a,b)) / \
-            (np.linalg.norm(a) * np.linalg.norm(b))
+    return np.sum(np.dot(a,b)) / (np.linalg.norm(a) * np.linalg.norm(b))
 
