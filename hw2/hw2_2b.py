@@ -65,10 +65,10 @@ print "U,V,S of M"
 print U
 print V
 print sigma
-'''
+
 print "Check SVD"
 print np.dot(np.dot(U,sigma), np.transpose(V))
-'''
+
 
 # (d) Set smaller singular value to 0
 U_1 = U[:,[0]]
