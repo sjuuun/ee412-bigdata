@@ -1,0 +1,50 @@
+Print the average diameter
+k is 1
+This is diameter
+15840.0159352
+k_value: 1, average diameter: 15840.015935
+4601
+Done
+k is 2
+4456
+This is diameter
+5901.01035104
+11524.5056502
+k_value: 2, average diameter: 8712.758001
+4596
+5
+Done
+k is 4
+4456
+1069
+3894
+This is diameter
+4150.83306122
+3922.23650322
+k_value: 4, average diameter: 2018.267391
+4594
+5
+Done
+k is 8
+4456
+1069
+3894
+3464
+3004
+3583
+3320
+This is diameter
+1309.29802344
+1019.8184494
+1244.96171415
+1700.12325846
+2239.56355761
+512.815591337
+k_value: 8, average diameter: 1003.322574
+4320
+3
+31
+9
+234
+2
+Done

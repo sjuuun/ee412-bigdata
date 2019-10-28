@@ -93,4 +93,6 @@ for cluster in clusters:
 # Print result
 avg_dia = sum_dia / k_value
 print "k_value: %d, average diameter: %f" % (k_value, avg_dia)
+for cluster in clusters:
+    print len(cluster[1])
 

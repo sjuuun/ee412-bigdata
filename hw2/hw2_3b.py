@@ -31,7 +31,10 @@ print util_matrix
 
 # Normalize utility matrix
 for i in range(len(users)):
-    util_matrix[i][:] -= sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i][:])
+    user_avg = sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i][:])
+    for j in range(len(items)):
+        if util_matrix[i][j] != 0:
+            util_matrix[i][j] -= user_avg
 print util_matrix
 
 def cosine_distance(a, b):
