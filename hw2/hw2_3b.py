@@ -35,7 +35,7 @@ for pair in pairs:
 # Normalize utility matrix
 users_avg = []
 for i in range(len(users)):
-    avg = sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i,:])
+    avg = sum(util_matrix[i,:]) / np.count_nonzero(util_matrix[i,:])
     users_avg.append(avg)
     for j in range(len(items)):
         # Normalize for nonzero elements
@@ -57,7 +57,7 @@ user_distance = []
 for i in range(len(users)):
     if i == U_index:
         continue
-    user_distance.append((i, cosine_distance(util_matrix[U_index,:], util_matrix[i][:])))
+    user_distance.append((i, cosine_distance(util_matrix[U_index,:], util_matrix[i,:])))
 user_distance.sort(key = lambda x: -x[1])
 # Index list of the 10 most similar users, which is used in util_matrix
 similar_users = [x[0] for x in user_distance[:10]]
@@ -81,5 +81,9 @@ predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 #print predict_user_base
 
+print "The result of prediction user-based"
 for x in predict_user_base:
     print "%d\t%f" % (x[0], x[1] + users_avg[U_index])
+
+
+## Predict ratings using the item-based method
