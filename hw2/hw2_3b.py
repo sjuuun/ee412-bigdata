@@ -29,18 +29,18 @@ items = list(set(items))
 # Construct utility matrix
 util_matrix = np.zeros((len(users), len(items)))
 for pair in pairs:
-    util_matrix[users.index(pair[0])][items.index(pair[1])] = pair[2]
+    util_matrix[users.index(pair[0]),items.index(pair[1])] = pair[2]
 #print util_matrix
 
 # Normalize utility matrix
 users_avg = []
 for i in range(len(users)):
-    avg = sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i][:])
+    avg = sum(util_matrix[i][:]) / np.count_nonzero(util_matrix[i,:])
     users_avg.append(avg)
     for j in range(len(items)):
         # Normalize for nonzero elements
-        if util_matrix[i][j] != 0:
-            util_matrix[i][j] -= avg
+        if util_matrix[i,j] != 0:
+            util_matrix[i,j] -= avg
 #print util_matrix
 
 # Return cosine distance of a and b
@@ -57,7 +57,7 @@ user_distance = []
 for i in range(len(users)):
     if i == U_index:
         continue
-    user_distance.append((i, cosine_distance(util_matrix[U_index][:], util_matrix[i][:])))
+    user_distance.append((i, cosine_distance(util_matrix[U_index,:], util_matrix[i][:])))
 user_distance.sort(key = lambda x: -x[1])
 # Index list of the 10 most similar users, which is used in util_matrix
 similar_users = [x[0] for x in user_distance[:10]]
@@ -75,7 +75,7 @@ for i in range(1, 1001):
     index = items.index(str(i))
     sum = 0
     for sim in similar_users:
-        sum += util_matrix[sim][index]
+        sum += util_matrix[sim,index]
     predict_user_base.append((i, sum / 10))
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]

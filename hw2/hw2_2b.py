@@ -1,8 +1,10 @@
 import numpy as np
 
 M = np.array([[1,2,3],[3,4,5],[5,4,3],[0,2,4],[1,3,5]])
+'''
 print "This is answer"
 print np.linalg.svd(M)
+'''
 
 # (a) Compute MTM and MMT.
 MTM = np.dot(np.transpose(M), M)
@@ -41,7 +43,7 @@ for i in range(rank):
     else:
         V[:,i] = MTM_pair[1][:,index]
     '''
-print V
+#print V
 
 # Find U, which is matrix of eigenvectors of MMT
 values = list(MMT_pair[0])
@@ -55,9 +57,32 @@ for i in range(rank):
     else:
         U[:,i] = MMT_pair[1][:,index]
     '''
-print U
+#print U
 
 sigma = np.sqrt(np.diag(eig_values))
+
+print "U,V,S of M"
+print U
+print V
 print sigma
-#print np.dot(U,sigma)
+'''
+print "Check SVD"
 print np.dot(np.dot(U,sigma), np.transpose(V))
+'''
+
+# (d) Set smaller singular value to 0
+U_1 = U[:,[0]]
+V_1 = V[:,[0]]
+sigma_1 = sigma[0,0]
+print "Approximated U,V,S"
+print U_1
+print V_1
+print sigma_1
+'''
+print "Check SVD"
+print np.dot(np.dot(U_1,sigma_1), np.transpose(V_1))
+'''
+
+# (e) Compare energy of the original and approximation
+print ("Original energy: %f" % (np.sum(np.square(sigma))))
+print "Approximated energy: %f" % (np.sum(np.square(sigma_1)))
