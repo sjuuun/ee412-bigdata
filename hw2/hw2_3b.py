@@ -6,13 +6,19 @@ import numpy as np
 f = open(sys.argv[1], 'r')
 lines = f.readlines()
 pairs = []
+user_list = []
+item_list = []
 
 for line in lines:
     tmp = re.split(',', line)[:-1]
     pairs.append([int(tmp[0]), int(tmp[1]), float(tmp[2])])
-#print pairs
-users = max(x[0] for x in pairs)
-items = max(x[1] for x in pairs)
+    user_list.append(int(tmp[0]))
+    item_list.append(int(tmp[1]))
+# Make distinct list
+user_list = list(set(user_list))
+item_list = list(set(item_list))
+users = max(user_list)
+items = max(item_list)
 
 # Construct utility matrix
 util_matrix = np.zeros((users + 1, items + 1))
@@ -22,23 +28,15 @@ for pair in pairs:
 print ("Construct Done")
 
 # Normalize utility matrix
-norm_matrix = np.zeros((users + 1, items + 1))
-norm_avg = [0]  # dump value
-for i in range(1, users + 1):
-    # Pass if user vector is zero vector
-    user_vector = np.copy(util_matrix[i,:])
+norm_avg = np.zeros(users + 1)
+for i in user_list:
+    user_vector = util_matrix[i,:]
     nonzero_index = np.where(user_vector != 0)[0]
     nonzero_num = len(nonzero_index)
-    if nonzero_num == 0:
-        norm_avg.append(0)
-        continue
     avg = sum(user_vector[nonzero_index]) / nonzero_num
-    norm_avg.append(avg)
+    norm_avg[i] = avg
     user_vector[nonzero_index] -= avg
-    norm_matrix[i,:] = user_vector
-#print np.count_nonzero(util_matrix - norm_matrix)
 print ("Normalize Done")
-#print len(norm_avg)
 
 # Return cosine distance of a and b
 def cosine_distance(a, b):
@@ -55,10 +53,10 @@ U = 600
 
 # Take top 10 similar user
 user_distance = []
-for i in range(1, users+1):
+for i in user_list:
     if i == U:
         continue
-    user_distance.append((i, cosine_distance(norm_matrix[U,:], norm_matrix[i,:])))
+    user_distance.append((i, cosine_distance(util_matrix[U,:], util_matrix[i,:])))
 user_distance.sort(key = lambda x: -x[1])
 similar_users = np.array([x[0] for x in user_distance[:10]])
 print similar_users
@@ -66,14 +64,14 @@ print similar_users
 predict_user_base = []
 for i in range(1, 1001):
     # If no one rate item, pass
-    if np.count_nonzero(util_matrix[:,i]) == 0:
+    if not i in item_list:
         continue
     nonzero_index = np.where(util_matrix[similar_users,i] != 0)[0]
     nonzero_num = len(nonzero_index)
     # If any similar user doesn't rate item, pass
     if nonzero_num == 0:
         continue
-    predict_user_base.append((i, np.sum(norm_matrix[similar_users[nonzero_index],i]) / nonzero_num))
+    predict_user_base.append((i, np.sum(util_matrix[similar_users[nonzero_index],i]) / nonzero_num))
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 
