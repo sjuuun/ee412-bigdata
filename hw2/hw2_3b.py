@@ -25,7 +25,6 @@ util_matrix = np.zeros((users + 1, items + 1))
 
 for pair in pairs:
     util_matrix[pair[0], pair[1]] = pair[2]
-print ("Construct Done")
 
 # Normalize utility matrix
 norm_avg = np.zeros(users + 1)
@@ -36,7 +35,6 @@ for i in user_list:
     avg = sum(user_vector[nonzero_index]) / nonzero_num
     norm_avg[i] = avg
     user_vector[nonzero_index] -= avg
-print ("Normalize Done")
 
 # Return cosine distance of a and b
 def cosine_distance(a, b):
@@ -59,7 +57,6 @@ for i in user_list:
     user_distance.append((i, cosine_distance(util_matrix[U,:], util_matrix[i,:])))
 user_distance.sort(key = lambda x: -x[1])
 similar_users = np.array([x[0] for x in user_distance[:10]])
-print similar_users
 
 predict_user_base = []
 for i in range(1, 1001):
@@ -75,6 +72,37 @@ for i in range(1, 1001):
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 
-print "The result of prediction user-based"
+print ("The result of prediction user-based")
 for x in predict_user_base:
-    print "%d\t%f" % (x[0], x[1] + norm_avg[U])
+    print ("%d\t%f" % (x[0], x[1] + norm_avg[U]))
+
+## Predict ratings using the user-based method
+# The movie whose ratings will be predicted.
+predict_item_base = []
+for M in range(1, 1001):
+    if not M in item_list:
+        continue
+
+    # Take top 10 similar item
+    item_distance = []
+    for i in item_list:
+        if i == M:
+            continue
+        item_distance.append((i, cosine_distance(util_matrix[:,M], util_matrix[:,i])))
+    item_distance.sort(key = lambda x: -x[1])
+    similar_items = np.array([x[0] for x in item_distance[:10]])
+    #print similar_items
+    
+    nonzero_index = np.where(util_matrix[U,similar_items] != 0)[0]
+    nonzero_num = len(nonzero_index)
+    # If user doesn't rate to all similar items, pass
+    if nonzero_num == 0:
+        continue
+    predict_item_base.append((M, np.sum(util_matrix[U,similar_items[nonzero_index]]) / nonzero_num))
+
+predict_item_base.sort(key = lambda x: -x[1])
+predict_item_base = predict_item_base[:5]
+
+print ("The result of prediction item-based")
+for x in predict_item_base:
+    print ("%d\t%f" % (x[0], x[1] + norm_avg[U]))
