@@ -60,7 +60,7 @@ for i in range(1, users+1):
         continue
     user_distance.append((i, cosine_distance(norm_matrix[U,:], norm_matrix[i,:])))
 user_distance.sort(key = lambda x: -x[1])
-similar_users = [x[0] for x in user_distance[:10]]
+similar_users = np.array([x[0] for x in user_distance[:10]])
 print similar_users
 
 predict_user_base = []
@@ -70,14 +70,16 @@ for i in range(1, 1001):
         continue
     nonzero_index = np.where(util_matrix[similar_users,i] != 0)[0]
     nonzero_num = len(nonzero_index)
-    #print norm_matrix[nonzero_index,i]
-    predict_user_base.append((i, np.sum(norm_matrix[nonzero_index,i] / nonzero_num)))
+    # If any similar user doesn't rate item, pass
+    if nonzero_num == 0:
+        continue
+    predict_user_base.append((i, np.sum(norm_matrix[similar_users[nonzero_index],i]) / nonzero_num))
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 
 print "The result of prediction user-based"
 for x in predict_user_base:
-    print "%d\t%f" % (x[0], x[1]) #+ users_avg[U_index])
+    print "%d\t%f" % (x[0], x[1] + norm_avg[U])
 '''
 # Return cosine distance of a and b
 def cosine_distance(a, b):
