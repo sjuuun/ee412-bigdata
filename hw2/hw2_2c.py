@@ -44,7 +44,6 @@ WWT_pair = np.linalg.eig(np.dot(W, np.transpose(W)))
 X = np.zeros((r,W_rank))
 Y = np.zeros((r,W_rank))
 eig_values = []
-print W_rank
 
 values = list(WTW_pair[0])
 for i in range(W_rank):
@@ -64,14 +63,9 @@ if X[0,0] < 0:
     X = -X
 
 sigma = np.sqrt(np.diag(eig_values))
-#print sigma
 inverse_sigma = np.linalg.pinv(sigma)
-#print inverse_sigma
-#print np.square(inverse_sigma)
-
-# Check SVD of W
-#print np.dot(np.dot(X,sigma), np.transpose(Y))
 
 U = np.dot(np.dot(np.dot(Y,inverse_sigma), inverse_sigma), np.transpose(X))
 print U
-print np.dot(np.dot(C,U), R)
+
+#print np.dot(np.dot(C,U), R)

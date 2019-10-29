@@ -4,7 +4,7 @@ echo "Print the average diameter of the given number of cluster"
 echo "Print the average diameter" > output.txt
 
 declare -i k=1
-for (( i=0; i<=5; i++ ))
+for (( i=0; i<=10; i++ ))
 do
 	echo "${i}"
 	echo "k is ${k}"

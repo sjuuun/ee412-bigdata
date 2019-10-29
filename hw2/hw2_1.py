@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 from pyspark import SparkConf, SparkContext
 
 # Take input
@@ -15,10 +16,10 @@ for line in lines:
 # Calculate Euclidean distance between two points
 def eu_distance(a, b):
     assert len(a) == len(b)
-    sumsq = 0
-    for i in range(len(a)):
-        sumsq = sumsq + (a[i]-b[i])**2
-    return sumsq ** 0.5
+    #sumsq = 0
+    #for i in range(len(a)):
+    #    sumsq = sumsq + (a[i]-b[i])**2
+    return np.linalg.norm(np.array(a)-np.array(b))
 
 # Find the closest point from q, return its index and distance
 def min_distance(points, q):
