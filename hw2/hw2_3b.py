@@ -80,30 +80,3 @@ predict_user_base = predict_user_base[:5]
 print "The result of prediction user-based"
 for x in predict_user_base:
     print "%d\t%f" % (x[0], x[1] + norm_avg[U])
-'''
-# Return cosine distance of a and b
-def cosine_distance(a, b):
-    assert (len(a) == len(b))
-    return np.sum(np.dot(a,b)) / (np.linalg.norm(a) * np.linalg.norm(b))
-
-# list of (movie_ID, predicted rating)
-predict_user_base = []
-for i in range(1, 1001):
-    if not str(i) in items:
-        continue
-    index = items.index(str(i))
-    sum = 0
-    for sim in similar_users:
-        sum += util_matrix[sim,index]
-    predict_user_base.append((i, sum / 10))
-predict_user_base.sort(key = lambda x: -x[1])
-predict_user_base = predict_user_base[:5]
-#print predict_user_base
-
-print "The result of prediction user-based"
-for x in predict_user_base:
-    print "%d\t%f" % (x[0], x[1]) #+ users_avg[U_index])
-
-
-## Predict ratings using the item-based method
-'''

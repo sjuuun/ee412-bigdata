@@ -10,7 +10,7 @@ for i in range(3):
     x = np.ones((3,1))
     tmp = np.zeros((3,1))
 
-    while (np.linalg.norm(x-tmp) > 0.001):
+    while (np.linalg.norm(x-tmp) > 0.0001):
     #for _ in range(10):
         tmp = x
         product = np.dot(M, x)
@@ -19,3 +19,4 @@ for i in range(3):
     M = M - eig_value*np.dot(x, np.transpose(x))
     print "eig_value: %f" % eig_value
     print x
+    print M
