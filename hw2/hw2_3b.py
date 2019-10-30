@@ -27,14 +27,16 @@ for pair in pairs:
     util_matrix[pair[0], pair[1]] = pair[2]
 
 # Normalize utility matrix
+norm_matrix = np.zeros((users + 1, items + 1))
 norm_avg = np.zeros(users + 1)
 for i in user_list:
-    user_vector = util_matrix[i,:]
+    user_vector = np.copy(util_matrix[i,:])
     nonzero_index = np.where(user_vector != 0)[0]
     nonzero_num = len(nonzero_index)
     avg = sum(user_vector[nonzero_index]) / nonzero_num
     norm_avg[i] = avg
     user_vector[nonzero_index] -= avg
+    norm_matrix[i,:] = user_vector
 
 # Return cosine distance of a and b
 def cosine_distance(a, b):
@@ -54,7 +56,7 @@ user_distance = []
 for i in user_list:
     if i == U:
         continue
-    user_distance.append((i, cosine_distance(util_matrix[U,:], util_matrix[i,:])))
+    user_distance.append((i, cosine_distance(norm_matrix[U,:], norm_matrix[i,:])))
 user_distance.sort(key = lambda x: -x[1])
 similar_users = np.array([x[0] for x in user_distance[:10]])
 
@@ -68,7 +70,7 @@ for i in range(1, 1001):
     # If any similar user doesn't rate item, pass
     if nonzero_num == 0:
         continue
-    predict_user_base.append((i, np.sum(util_matrix[similar_users[nonzero_index],i]) / nonzero_num))
+    predict_user_base.append((i, np.sum(norm_matrix[similar_users[nonzero_index],i]) / nonzero_num))
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 
@@ -88,7 +90,7 @@ for M in range(1, 1001):
     for i in item_list:
         if i == M:
             continue
-        item_distance.append((i, cosine_distance(util_matrix[:,M], util_matrix[:,i])))
+        item_distance.append((i, cosine_distance(norm_matrix[:,M], norm_matrix[:,i])))
     item_distance.sort(key = lambda x: -x[1])
     similar_items = np.array([x[0] for x in item_distance[:10]])
     #print similar_items
@@ -98,7 +100,7 @@ for M in range(1, 1001):
     # If user doesn't rate to all similar items, pass
     if nonzero_num == 0:
         continue
-    predict_item_base.append((M, np.sum(util_matrix[U,similar_items[nonzero_index]]) / nonzero_num))
+    predict_item_base.append((M, np.sum(norm_matrix[U,similar_items[nonzero_index]]) / nonzero_num))
 
 predict_item_base.sort(key = lambda x: -x[1])
 predict_item_base = predict_item_base[:5]
