@@ -65,12 +65,14 @@ for i in range(1, 1001):
     # If no one rate item, pass
     if not i in item_list:
         continue
+    # If any similar user doesn't rate item, pass
+    if not np.any(util_matrix[similar_users,i]):
+        continue
+
     nonzero_index = np.where(util_matrix[similar_users,i] != 0)[0]
     nonzero_num = len(nonzero_index)
-    # If any similar user doesn't rate item, pass
-    if nonzero_num == 0:
-        continue
     predict_user_base.append((i, np.sum(norm_matrix[similar_users[nonzero_index],i]) / nonzero_num))
+
 predict_user_base.sort(key = lambda x: -x[1])
 predict_user_base = predict_user_base[:5]
 
@@ -93,13 +95,13 @@ for M in range(1, 1001):
         item_distance.append((i, cosine_distance(norm_matrix[:,M], norm_matrix[:,i])))
     item_distance.sort(key = lambda x: -x[1])
     similar_items = np.array([x[0] for x in item_distance[:10]])
-    #print similar_items
     
+    # If user doesn't rate to all similar items, pass
+    if not np.any(util_matrix[U,similar_items]):
+        continue
+
     nonzero_index = np.where(util_matrix[U,similar_items] != 0)[0]
     nonzero_num = len(nonzero_index)
-    # If user doesn't rate to all similar items, pass
-    if nonzero_num == 0:
-        continue
     predict_item_base.append((M, np.sum(norm_matrix[U,similar_items[nonzero_index]]) / nonzero_num))
 
 predict_item_base.sort(key = lambda x: -x[1])
