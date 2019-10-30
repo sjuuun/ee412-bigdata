@@ -4,3 +4,38 @@ This is diameter
 k_value: 1, average diameter: 15840.015935
 Done
 k is 2
+This is diameter
+k_value: 2, average diameter: 8712.758001
+Done
+k is 4
+This is diameter
+k_value: 4, average diameter: 2018.267391
+Done
+k is 8
+This is diameter
+k_value: 8, average diameter: 1003.322574
+Done
+k is 16
+This is diameter
+k_value: 16, average diameter: 504.611513
+Done
+k is 32
+This is diameter
+k_value: 32, average diameter: 216.904215
+Done
+k is 64
+This is diameter
+k_value: 64, average diameter: 110.928037
+Done
+k is 128
+This is diameter
+k_value: 128, average diameter: 48.644531
+Done
+k is 256
+This is diameter
+k_value: 256, average diameter: 19.191004
+Done
+k is 512
+Done
+k is 1024
+Done

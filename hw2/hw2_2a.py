@@ -13,6 +13,6 @@ for i in range(3):
         x = product / np.linalg.norm(product)
     eig_value = np.dot(np.dot(np.transpose(x), M), x)
     M = M - eig_value*np.dot(x, np.transpose(x))
-    print "eig_value: %f" % eig_value
-    print x
-    print M
+    print ("eig_value: %f" % eig_value)
+    print (x)
+    print (M)

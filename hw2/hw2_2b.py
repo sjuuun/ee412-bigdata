@@ -5,21 +5,21 @@ M = np.array([[1,2,3],[3,4,5],[5,4,3],[0,2,4],[1,3,5]])
 # (a) Compute MTM and MMT.
 MTM = np.dot(np.transpose(M), M)
 MMT = np.dot(M, np.transpose(M))
-print MTM
-print MMT
+print (MTM)
+print (MMT)
 
 # (b) Compute eigenpairs of MTM and MMT.
-print "eigenpair of MTM"
+print ("eigenpair of MTM")
 MTM_pair = np.linalg.eig(MTM)
-print MTM_pair
-print "eigenpair of MMT"
+print (MTM_pair)
+print ("eigenpair of MMT")
 MMT_pair = np.linalg.eig(MMT)
-print MMT_pair
+print (MMT_pair)
 
 # (c) Find SVD (assume all eigenvalues are different)
 rank = np.linalg.matrix_rank(M)
-print "This is rank"
-print rank
+print ("This is rank")
+print (rank)
 
 eig_values = []
 V = np.zeros((M.shape[1], rank))
@@ -47,21 +47,21 @@ if U[0,0] < 0:
 
 sigma = np.sqrt(np.diag(eig_values))
 
-print "U,V,S of M"
-print U
-print V
-print sigma
+print ("U,V,S of M")
+print (U)
+print (V)
+print (sigma)
 
 # (d) Set smaller singular value to 0
 U_1 = U[:,[0]]
 V_1 = V[:,[0]]
 sigma_1 = sigma[0,0]
 
-print "Approximated U,V,S"
-print U_1
-print V_1
-print sigma_1
+print ("Approximated U,V,S")
+print (U_1)
+print (V_1)
+print (sigma_1)
 
 # (e) Compare energy of the original and approximation
-print "Original energy: %f" % (np.sum(np.square(sigma)))
-print "Approximated energy: %f" % (np.sum(np.square(sigma_1)))
+print ("Original energy: %f" % (np.sum(np.square(sigma))))
+print ("Approximated energy: %f" % (np.sum(np.square(sigma_1))))

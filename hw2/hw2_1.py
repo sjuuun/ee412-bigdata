@@ -11,14 +11,11 @@ k_value = int(sys.argv[2])
 # make input to data sample
 data = []
 for line in lines:
-    data.append(map(float, line.split(" ")))
+    data.append(list(map(float, line.split(" "))))
 
 # Calculate Euclidean distance between two points
 def eu_distance(a, b):
     assert len(a) == len(b)
-    #sumsq = 0
-    #for i in range(len(a)):
-    #    sumsq = sumsq + (a[i]-b[i])**2
     return np.linalg.norm(np.array(a)-np.array(b))
 
 # Find the closest point from q, return its index and distance
@@ -42,8 +39,6 @@ while (len(centroid) < k_value):
             cent_dis = dis
             cent_point = p
     centroid.append(cent_point)
-#print [data.index(center) for center in centroid]
-
 
 ## K-Means Clustering with Spark
 conf = SparkConf()
@@ -55,9 +50,6 @@ clusters = D0.map(lambda p: (min_distance(centroid, p)[0], p)) \
             .groupByKey() \
             .mapValues(list) \
             .collect()
-#print "Cluster info k: %d" % k_value
-#print [(c[0], len(c[1])) for c in clusters]
-
 
 ## Find average diameter
 # Find furthest distance from q, return just distance
@@ -70,7 +62,6 @@ def max_distance(points, q):
             max_point = p
     return max_dis
 
-print "This is diameter"
 sum_dia = 0
 for cluster in clusters:
     diameter = 0
@@ -79,10 +70,9 @@ for cluster in clusters:
         tmp = max_distance(sets, p)
         if diameter < tmp:
             diameter = tmp
-    #print diameter
     sum_dia = sum_dia + diameter
 
 # Print result
 avg_dia = sum_dia / k_value
-print "k_value: %d, average diameter: %f" % (k_value, avg_dia)
+print ("k_value: %d, average diameter: %f" % (k_value, avg_dia))
 

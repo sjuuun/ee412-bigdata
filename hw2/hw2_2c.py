@@ -4,13 +4,11 @@ import numpy as np
 M = np.array([[1,1,1,0,0],[3,3,3,0,0],[4,4,4,0,0],[5,5,5,0,0],
              [0,0,0,4,4],[0,0,0,5,5],[0,0,0,2,2]])
 M_norm = float(np.sum(np.square(M)))
-print M
-print M_norm
 
 # select row and columns
 # (a) [1,2], [0,1] (b) [3,4] [1,2] (c) [0,6] [0,4]
-row_select = [1,2]
-col_select = [0,1]
+row_select = [0,6]
+col_select = [0,4]
 r = np.linalg.matrix_rank(M)
 
 # Initialize C,U,R
@@ -23,21 +21,20 @@ for i in range(r):
     q = float(np.sum(np.square(M[:,col_select[i]])))
     weight = (r * (q/M_norm)) ** 0.5
     C[:,i] = M[:,col_select[i]] / weight
-print C
+print (C)
 
 # Compute matrix R
 for i in range(r):
     q = float(np.sum(np.square(M[row_select[i],:])))
     weight = (r * (q/M_norm)) ** 0.5
     R[i,:] = M[row_select[i],:] / weight
-print R
+print (R)
 
 # Compute matrix U
 W = np.zeros((r,r))
 for i in range(r):
     for j in range(r):
         W[i,j] = M[row_select[i], col_select[j]]
-print W
 W_rank = np.linalg.matrix_rank(W)
 WTW_pair = np.linalg.eig(np.dot(np.transpose(W), W))
 WWT_pair = np.linalg.eig(np.dot(W, np.transpose(W)))
@@ -66,6 +63,6 @@ sigma = np.sqrt(np.diag(eig_values))
 inverse_sigma = np.linalg.pinv(sigma)
 
 U = np.dot(np.dot(np.dot(Y,inverse_sigma), inverse_sigma), np.transpose(X))
-print U
+print (U)
 
-#print np.dot(np.dot(C,U), R)
+#print (np.dot(np.dot(C,U), R))
