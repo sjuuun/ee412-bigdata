@@ -53,9 +53,9 @@ print (V)
 print (sigma)
 
 # (d) Set smaller singular value to 0
-U_1 = U[:,[0]]
-V_1 = V[:,[0]]
-sigma_1 = sigma[0,0]
+U_1 = U[:,:-1]
+V_1 = V[:,:-1]
+sigma_1 = sigma[:-1,:-1]
 
 print ("Approximated U,V,S")
 print (U_1)
