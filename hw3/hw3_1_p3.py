@@ -52,4 +52,5 @@ for i in range(len(v)):
 pr.sort(key = lambda x: -x[1])
 pr = pr[:10]
 for top in pr:
+    # TODO: change to %.5f!!
     print("%d\t%.10f" % (top[0], top[1]))
