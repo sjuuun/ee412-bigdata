@@ -1,4 +1,3 @@
-# Please check file name!! py2 or py3
 import sys
 from pyspark import SparkConf, SparkContext
 
