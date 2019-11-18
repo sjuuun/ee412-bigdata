@@ -16,10 +16,10 @@ source = M.map(lambda pair: (pair[0], 1)) \
           .collect()
 s_dic = {}
 for s in source:
-    s_dic[s[0]] = s[1]
+    s_dic[s[0]] = float(s[1])
 
 # Initialize vector v, e, beta
-v = [1/len(s_dic)] * len(s_dic)
+v = [1/float(len(s_dic))] * len(s_dic)
 beta = 0.9
 e = (1-beta)/len(s_dic)
 
@@ -27,7 +27,6 @@ e = (1-beta)/len(s_dic)
 def multiple(pair):
     c, r = pair
     return (r, v[c-1]/s_dic[c])
-    #p[1], v[p[0]-1]/s_dic[p[0]]
 
 # Texation: beta*M*v + (1-beta)*e/n
 def texation(value):
@@ -52,5 +51,4 @@ for i in range(len(v)):
 pr.sort(key = lambda x: -x[1])
 pr = pr[:10]
 for top in pr:
-    # TODO: change to %.5f!!
-    print("%d\t%.10f" % (top[0], top[1]))
+    print("%d\t%.5f" % (top[0], top[1]))
