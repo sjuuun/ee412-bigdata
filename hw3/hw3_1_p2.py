@@ -8,7 +8,8 @@ lines = sc.textFile(sys.argv[1])
 
 # Split and mapping of transition matrix M
 # (i,j) means Mji = 1
-M = lines.map(lambda l: list(map(int, l.split())))
+M = lines.distinct() \
+        .map(lambda l: list(map(int, l.split())))
 
 # Count how many times source appear
 source = M.map(lambda pair: (pair[0], 1)) \
@@ -44,7 +45,6 @@ for _ in range(iter):
     v = [texation(x[1]) for x in mul]
 
 # Result
-# Question: how do we break tie?
 pr = []
 for i in range(len(v)):
     pr.append((i+1, v[i]))
