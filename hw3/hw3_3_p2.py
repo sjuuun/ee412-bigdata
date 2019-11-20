@@ -1,12 +1,8 @@
 import sys
 import numpy as np
 
-# Get input
-f = open(sys.argv[1], 'r')  # features.txt
-q = open(sys.argv[2], 'r')  # labels.txt
-features = f.readlines()
-labels = q.readlines()
-
+# Preprocessing - make train and data sets.
+# x contains feature which is numpy array type and label.
 def make_set(x_list, y_list, num):
     assert(len(x_list) == len(y_list) == num)
     result = []
@@ -17,34 +13,7 @@ def make_set(x_list, y_list, num):
         result.append((np.array(x), y))
     return result
 
-# Divide data to 10 chunks
-nset = 600
-set_num = 10
-dim = 122
-test_set = []
-train_sets = []
-# Take first 600 data to test
-test_set = make_set(features[:nset], labels[:nset], nset)
-#print (test_set)
-
-# Take train sets
-for i in range(1,set_num):
-    feature = features[nset*i : nset*(i+1)]
-    label = labels[nset*i : nset*(i+1)]
-    train_sets.append(make_set(feature, label, nset))
-#print (train_sets)
-
-
-# SVM algorithm
-C = 0.5
-eta = 0.0001
-
-'''
-x_set = [(np.array([1,4,1]), 1), (np.array([2,2,1]), 1), (np.array([3,4,1]), 1), (np.array([1,1,1]), -1),
-     (np.array([2,1,1]), -1), (np.array([3,1,1]), -1)]
-w = np.array([0,1,-2])
-'''
-
+# Train according to SVM algorithm.
 def svm_train(C, eta, train_set, w):
     d_w = np.zeros(len(w))
     for i in range(len(train_set)):
@@ -55,6 +24,9 @@ def svm_train(C, eta, train_set, w):
     d_w = w + C*d_w
     return w - eta*d_w
 
+# Test trained model from SVM algorithm.
+# For test_set, predict label, and compare with real label.
+# Return accuracy of test_set
 def svm_test(test_set, w):
     correct = 0
     for x in test_set:
@@ -63,31 +35,47 @@ def svm_test(test_set, w):
             correct += 1
     return correct / float(len(test_set))
 
-'''
-for i in range(6):
-    print svm_test(x_set, w)
-    w = svm_train(C, eta, x_set, w)
-    print w
-'''
-'''
-w_last = np.ones(len(w))
-iter = 0
-while (np.linalg.norm(w - w_last) > 0.001):
-    w_last = np.copy(w)
-    w = svm_train(C, eta, x_set, w)
-    if(iter % 1000 == 0):
-        print w
-        print w_last
-        print np.linalg.norm(w - w_last)
-    iter += 1
-print svm_test(x_set, w)
-'''
+# k-fold cross validation.
+# Let each subsets be the test data, and use the others as training data.
+# Lastly, compute average of each test data.
+def k_fold(sets, C, eta, d):
+    accuracy = []
+    for i in range(len(sets)):
+        test_set = sets[i]
+        train_sets = sets[:i] + sets[(i+1):]
+        # w is initialized with zero vector, and last element is b,
+        # which is also initialized with zero.
+        w = np.zeros(d+1)
+        for train in train_sets:
+            # Train 500 times for each train set.
+            for _ in range(500):
+                w = svm_train(C, eta, train, w)
+        accuracy.append(svm_test(test_set, w))
+    return np.mean(np.array(accuracy))
 
-w = np.zeros(dim+1)
-w_last = np.ones(dim+1)
-while (np.linalg.norm(w - w_last) > 0.001):
-    w_last = np.copy(w)
-    for train in train_sets:
-        w = svm_train(C, eta, train, w)
+# Main function
+if __name__ =="__main__":
+    # Get input
+    f = open(sys.argv[1], 'r')  # features.txt
+    q = open(sys.argv[2], 'r')  # labels.txt
+    features = f.readlines()
+    labels = q.readlines()
 
-print svm_test(test_set, w)
+    # Divide into 10 chunks of size 600
+    set_size = 600
+    set_num = 10
+    dim = 122
+    sets = []
+    for i in range(set_num):
+        feature = features[set_size*i : set_size*(i+1)]
+        label = labels[set_size*i : set_size*(i+1)]
+        sets.append(make_set(feature, label, set_size))
+
+    # SVM algorithm parameters
+    C = 0.5
+    eta = 0.001
+
+    #print svm_test(test_set, w)
+    print (k_fold(sets, C, eta, dim))
+    print (C)
+    print (eta)
