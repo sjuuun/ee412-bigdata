@@ -5,3 +5,5 @@ from pyspark import SparkConf, SparkContext
 conf = SparkConf()
 sc = SparkContext(conf=conf)
 lines = sc.textFile(sys.argv[1])
+
+pairs = lines.map(lambda line: line.split(','))
