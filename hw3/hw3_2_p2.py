@@ -12,73 +12,63 @@ def update_hitPoint(hitPoint, group):
         src, hit = g
         hitPoint[src] += [h[0] for h in hit]
 
-# Define for BFS
-DONE = 0
-DIST = 1
-WEIGHT = 2
-PATH = 3
+def GN_per_root(root):
+    node = {root:(0,1)}
+    parent = {}
+    after = [root]
+    cur = []
+    # Step 1 & 2: label depth and node weights
+    count = 0
+    while(len(after) != 0):
+    #for _ in range(4):
+        cur = after
+        after = []
+        tmpNode = {}
+        for c in cur:
+            tmp = [p for p in adjPoint[c] if not(p in node)]
+            for t in tmp:
+                # Update node
+                if t in tmpNode:
+                    tmpNode[t] = (tmpNode[t][0], tmpNode[t][1] + 1)
+                else:
+                    tmpNode[t] = (node[c][0] + 1, node[c][1])
 
-def bfs_init(point):
-    return (point, (point, 1))
+                # Update parent
+                if t in parent:
+                    parent[t].add(c)
+                else:
+                    parent[t] = set([c])
+            after += tmp
+        node.update(tmpNode)
+        #print cur
+        #print after
+        #print parent
+        #print node
+        #cur = list(set(after))
+        after = list(set(after))
+        #print "HELLO IT'S COUNT: %d" % count
+        count += 1
+    #print len(node)
 
-'''
-def bfs_left((K, V)):
-    return not V[DONE]
-
-def bfs_adj(path, adj):
-    flatten = [y for x in path for y in x]
-    flatten = list(set(flatten))
-    return [p for p in adj if not(p in flatten)]
-
-def bfs_next(data, target):
-    (src, dst), [done, dist, weight, path] = data
-    dist += 1
-    path = [p + [dst] for p in path]
-    return ((src, target), [done, dist, weight, path])
-'''
-
-def bfs_map((src, dst)):
-    step = [x for x in adjPoint[dst[0]] if not(x in hitPoint[src])]
-    return [((src, d), dst[1]) for d in step]
-    '''
-    K,V = data
-    if V[DONE]:
-        return [data]
-    else:
-        adj = bfs_adj(V[PATH], adjPoint[K[1]])
-        result = [bfs_next(data, p) for p in adj]
-        V[DONE] = 1
-        return [data] + result
-    '''
-
-def bfs_reduce(V1, V2):
-    
-    '''
-    if V1[DIST] < V2[DIST]:
-        return V1
-    elif V1[DIST] > V2[DIST]:
-        return V2
-    else:
-        assert(V1[DIST] == V2[DIST])
-        w = V1[WEIGHT] + V2[WEIGHT]
-        path = V1[PATH] + V2[PATH]
-        return [V1[0], V1[1], w, path]
-    '''
-
-def bfs_edge(path, dst):
-    edge = []
-    for i in range(len(path)-1):
-        edge.append((path[i], path[i+1]))
-    edge.append((path[-1], dst))
-    return edge
-
-def bfs_between((K,V)):
-    w = 1 / float(V[WEIGHT])
-    edge = []
-    for p in V[PATH]:
-        edge = edge + bfs_edge(p, K[1])
-    return [(e,w) for e in edge]   
-
+    # Step 3: compute edge weight
+    allnode = list(node)
+    allnode.sort(key = lambda n: -node[n][0])
+    nodeWeight = {}
+    result = []
+    for a in allnode[:-1]:
+        if a in nodeWeight:
+            my = nodeWeight[a] + 1
+        else:
+            my = 1
+        for p in list(parent[a]):
+            parentWeight = (my*node[p][1]) / float(node[a][1])
+            result.append(((p, a), parentWeight))
+            if p in nodeWeight:
+                nodeWeight[p] += parentWeight
+            else:
+                nodeWeight[p] = parentWeight
+    #print result
+    return result
 
 if __name__=="__main__":
     # Get imput
@@ -88,7 +78,7 @@ if __name__=="__main__":
 
     # Remove header from .csv file
     header = lines.take(1)[0]
-    # pairs: RDD of [list of user_id]
+    # pairs: RDD of [list of co-authors]
     pairs = lines.filter(lambda line: line != header) \
                 .map(lambda line: list(map(int, line.split(','))) ) \
                 .map(lambda pair: (pair[1], [pair[2]])) \
@@ -99,16 +89,33 @@ if __name__=="__main__":
                     .reduceByKey(lambda n1, n2 : list(set(n1+n2))) \
                     .collectAsMap()
     
+    '''
     tmp = pairs.flatMap(lambda group: group) \
                 .distinct().take(1) # \
                 #.map(bfs_init)
-    bfs = sc.parallelize(tmp).map(bfs_init)
+    print tmp
+    '''
+    
+    gn = pairs.flatMap(lambda group: group) \
+                .distinct() \
+                .flatMap(GN_per_root) \
+                .filter(lambda k: k[0][0] < k[0][1]) \
+                .reduceByKey(lambda n1, n2: n1+n2) \
+                .collect()
+    
+    gn.sort(key = lambda x: -x[1])
+    print gn[:10]
+    for g in gn[:10]:
+        print ("%d\t%d\t%.5f" % (g[0][0], g[0][1], g[1]))
+    #gn = sc.parallelize([94]).map(GN_per_root)
+    #GN_per_root(5)
+    print "DONE"
+    #print len(gn.filter(lambda k: k[0][0] < k[0][1]).reduceByKey(lambda n1, n2: n1+n2).collect())
+    #print len(gn.collect())
 
-    hitPoint = bfs.collectAsMap()
-    for h in hitPoint:
-        hitPoint[h] = [hitPoint[h][0]]
-    level = [bfs.collect()]
+    #bfs = sc.parallelize(tmp).map(bfs_init)
 
+    '''
     c = 0
     while (len(level[-1]) != 0):
     #for i in range(4):
@@ -123,28 +130,4 @@ if __name__=="__main__":
         print "HELLO IT'S COUNT: %d" % c
         c += 1
     #print hitPoint
-    #print level
-    
-
-
-    '''
-    c = 0
-    graph = []
-    while (not bfs.isEmpty()): #bfs.filter(bfs_left).count() > 0):
-        bfs = bfs.flatMap(bfs_map) \
-                .reduceByKey(bfs_reduce)
-        graph += bfs.filter(lambda d: d[1][DONE]).collect()
-        bfs = bfs.filter(lambda d: not d[1][DONE])
-        c += 1
-        print "HELLO IT'S COUNT: %d" % c
-    print bfs.collect()
-    print graph
-
-    between  = sc.parallelize(graph) \
-                 .filter(lambda p: p[1][DIST] != 0) \
-                 .flatMap(bfs_between) \
-                 .filter(lambda k: k[0][0] < k[0][1]) \
-                 .reduceByKey(lambda n1,n2: n1+n2) \
-                 .collect()
-    between.sort(key = lambda x: -x[1])
-    print between'''
+    #print level'''
