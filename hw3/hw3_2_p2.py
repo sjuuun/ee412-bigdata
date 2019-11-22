@@ -100,7 +100,6 @@ if __name__=="__main__":
                 .flatMap(GN_per_root) \
                 .reduceByKey(lambda n1, n2: n1+n2) \
                 .collect()
-                #.filter(lambda k: k[0][0] < k[0][1]) \
     
     gn.sort(key = lambda x: -x[1])
     #print gn[:10]
