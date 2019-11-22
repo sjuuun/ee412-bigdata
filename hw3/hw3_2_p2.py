@@ -18,9 +18,7 @@ def GN_per_root(root):
     after = [root]
     cur = []
     # Step 1 & 2: label depth and node weights
-    #count = 0
     while(len(after) != 0):
-    #for _ in range(4):
         cur = after
         after = []
         tmpNode = {}
@@ -40,15 +38,8 @@ def GN_per_root(root):
                     parent[t] = set([c])
             after += tmp
         node.update(tmpNode)
-        #print cur
-        #print after
-        #print parent
-        #print node
         cur = list(set(after))
         after = list(set(after))
-        #print "HELLO IT'S COUNT: %d" % count
-        #count += 1
-    #print len(node)
 
     # Step 3: compute edge weight
     allnode = list(node)
@@ -93,8 +84,6 @@ if __name__=="__main__":
                     .reduceByKey(lambda n1, n2 : list(set(n1+n2))) \
                     .collectAsMap()
 
-    #print GN_per_root(5)
-    
     gn = pairs.flatMap(lambda group: group) \
                 .distinct() \
                 .flatMap(GN_per_root) \
@@ -102,6 +91,5 @@ if __name__=="__main__":
                 .collect()
     
     gn.sort(key = lambda x: -x[1])
-    #print gn[:10]
     for g in gn[:10]:
         print ("%d\t%d\t%.5f" % (g[0][0], g[0][1], g[1]/2))
