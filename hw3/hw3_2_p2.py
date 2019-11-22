@@ -79,7 +79,7 @@ if __name__=="__main__":
     pairs = lines.filter(lambda line: line != header) \
                 .map(lambda line: list(map(int, line.split(','))) ) \
                 .map(lambda pair: (pair[1], [pair[2]])) \
-                .reduceByKey(lambda n1, n2: n1+n2) \
+                .reduceByKey(lambda n1, n2: list(set(n1+n2))) \
                 .map(lambda group: group[1]) \
                 .filter(lambda k: len(k) > 1)
 
@@ -87,12 +87,10 @@ if __name__=="__main__":
                     .reduceByKey(lambda n1, n2 : list(set(n1+n2))) \
                     .collectAsMap()
     
-    #gn = pairs.flatMap(lambda group: group) \
     gn = sc.parallelize(adjPoint) \
-                .flatMap(GN_per_root) \
-                .reduceByKey(lambda n1, n2: n1+n2) \
-                .collect()
-                                #.distinct() \
+            .flatMap(GN_per_root) \
+            .reduceByKey(lambda n1, n2: n1+n2) \
+            .collect()
 
     gn.sort(key = lambda x: -x[1])
     for g in gn[:10]:
