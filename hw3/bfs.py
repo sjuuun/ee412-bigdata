@@ -22,8 +22,8 @@ DIST = 1
 WEIGHT = 2
 PATH = 3
 
-def bfs_init((src, dst)):
-    return ((src, dst), [0,1,1,[[src]]])
+def bfs_init(point):
+    return ((point, point), [0,0,1,[[]]])
 
 def bfs_left((K, V)):
     return not V[DONE]
@@ -72,10 +72,10 @@ def bfs_between((K,V)):
     edge = []
     for p in V[PATH]:
         edge = edge + bfs_edge(p, K[1])
-    return [(e,w) for e in edge]
+    return [(e,w) for e in edge] 
 
 
-bfs = pair.map(bfs_init)
+bfs = pair.keys().distinct().map(bfs_init)
 print bfs.filter(bfs_left).count()
 while (bfs.filter(bfs_left).count() > 0):
     bfs = bfs.flatMap(bfs_map) \
@@ -85,7 +85,7 @@ for b in bfs.collect():
     print b
 
 # Step 3
-between  = bfs.flatMap(bfs_between) \
+between  = bfs.filter(lambda p: p[1][DIST] != 0).flatMap(bfs_between) \
               .filter(lambda k: k[0][0] < k[0][1]) \
               .reduceByKey(lambda n1,n2: n1+n2) \
               .collect()
