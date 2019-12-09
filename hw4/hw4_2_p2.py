@@ -10,10 +10,12 @@ def merge_bucket(bucket):
         tmp.append(bucket.pop())
         a = bucket.pop()
         b = bucket.pop()
-        bucket.append((a[0], a[1] + b[1]))
+        assert(a[0] > b[0])
+        bucket.append((a[0], a[1] + 1))
     while (len(tmp) > 0):
         bucket.append(tmp.pop())
     return True
+
 
 if __name__ == "__main__":
     #sys.stdin = open(sys.argv[1], 'r')
@@ -35,7 +37,7 @@ if __name__ == "__main__":
             continue
 
         # If a is 1, add bucket whose size is 1
-        bucket.append((timestamp, 1))
+        bucket.append((timestamp, 0))
         merge_bucket(bucket)
 
     print bucket
@@ -46,4 +48,6 @@ if __name__ == "__main__":
     for k in k_list:
         limit = timestamp - k
         candidate = [x for x in bucket if x[0] > limit]
-        print candidate
+        result = sum(2**c[1] for c in candidate[1:])
+        result += 2**(candidate[0][1] - 1)
+        print result
