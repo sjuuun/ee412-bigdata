@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 class Fully_Connected_Layer:
@@ -24,10 +25,21 @@ class Fully_Connected_Layer:
         self.Backward(Input, Label, Output)        
 
 '''Construct a fully-connected network'''        
-Network = Fully_Connected_Layer(learning_rate)
+#Network = Fully_Connected_Layer(learning_rate)
+
+'''Get input - train set and test set'''
+f_train = open(sys.argv[1], 'r')
+f_test = open(sys.argv[2], 'r')
+train_set = [np.array(list(map(float, line.split(',')))) for line in f_train.readlines()]
+test_set =  [np.array(list(map(float, line.split(',')))) for line in f_test.readlines()]
 
 '''Train the network for the number of iterations'''
 '''Implement function to measure the accuracy'''
+#iteration = len(train_set)
+iteration = 1
 for i in range(iteration):
-    Network.Train(train_data, train_label)
+    train_data = train_set[i][:-1]
+    train_label = np.zeros(10)
+    train_label[int(train_set[i][-1])] = 1
+#    Network.Train(train_data, train_label)
     
