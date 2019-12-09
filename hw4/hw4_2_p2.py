@@ -47,7 +47,11 @@ if __name__ == "__main__":
     print k_list
     for k in k_list:
         limit = timestamp - k
-        candidate = [x for x in bucket if x[0] > limit]
-        result = sum(2**c[1] for c in candidate[1:])
-        result += 2**(candidate[0][1] - 1)
-        print result
+        candidate = [x[1] for x in bucket if x[0] > limit]
+        print candidate
+        if len(candidate) > 0:
+            candidate[0] -= 1
+            result = sum(2**c for c in candidate)
+        else:
+            result = 0
+        print (result)
