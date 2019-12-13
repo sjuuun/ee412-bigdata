@@ -10,12 +10,10 @@ class Fully_Connected_Layer:
         self.HiddenDim = 128
         self.OutputDim = 10
         self.learning_rate = learning_rate
-
+        
         '''Weight Initialization'''
         self.W1 = np.random.randn(self.InputDim, self.HiddenDim)
         self.W2 = np.random.randn(self.HiddenDim, self.OutputDim)
-        #self.W1 = np.zeros((self.InputDim, self.HiddenDim))
-        #self.W2 = np.zeros((self.HiddenDim, self.OutputDim))
 
         '''Step Initialization'''
         self.u = None
@@ -31,32 +29,26 @@ class Fully_Connected_Layer:
 
     def Backward(self, Input, Label, Output):
         '''Implement backward propagation'''
-        '''Update parameters using gradient descent'''
-        #loss = 0.5 * np.square(Output - Label).sum()
-        #print loss
-        
         grad_y = Output - Label
-        #print grad_y
-        #print np.shape(grad_y)
         grad_v = (Output * (1 - Output)) * grad_y
-        #print np.shape(grad_v)
         grad_W2 = self.u_sig.T.dot(grad_v)
-        #print np.shape(grad_W2)
         grad_u_sig = grad_v.dot(self.W2.T)
         grad_u = (self.u_sig * (1 - self.u_sig)) * grad_u_sig
         grad_W1 = Input.T.dot(grad_u)
 
+        '''Update parameters using gradient descent'''
         self.W1 -= self.learning_rate * grad_W1
         self.W2 -= self.learning_rate * grad_W2
 
-
     def Train(self, Input, Label):
+        '''Function to train network'''
         Output = self.Forward(Input)
         #loss = 0.5 * np.square(Output - Label).sum()
         #print loss
         self.Backward(Input, Label, Output)
 
     def Test(self, Input, Label):
+        '''Function to measure the accuracy'''
         Output = self.Forward(Input)
         assert (np.shape(Label) == np.shape(Output))
         count = 0.0
@@ -64,14 +56,6 @@ class Fully_Connected_Layer:
             if np.argmax(Label[i, :]) == np.argmax(Output[i, :]):
                 count += 1
         return count / len(Label)
-
-    def decrease_rate(self):
-        self.learning_rate *= 0.5
-
-    def PrintW(self):
-        print self.W1
-        print self.W2
-
 
 '''Construct a fully-connected network'''
 learning_rate = 3e-2
@@ -92,23 +76,20 @@ test_label = np.zeros((len(test_set), 10))
 test_label[np.arange(len(test_set)), list(map(int, test_set[:, -1]))] = 1
 
 '''Train the network for the number of iterations'''
-'''Implement function to measure the accuracy'''
-epoch = 1000
+iteration = 1000
 batch_size = 100
-for j in range(epoch):
-    #iteration = len(train_set)
-    #iteration = 1
-    #for _ in range(iteration):
+for j in range(iteration):
     i = 0
     while (i < len(train_data)):
-        #for i in range(iteration):
         Network.Train(train_data[i:(i+batch_size), :], train_label[i:(i+batch_size), :])
         i += batch_size
 
     '''Test the network with test_set'''
-    print "Accuracy %d: %f" % (j, Network.Test(test_data, test_label))
+    #print "Accuracy %d: %f" % (j, Network.Test(test_data, test_label))
     #print "Accuracy %d: %f" % (j, Network.Test(train_data, train_label))
 
-    #if (j != 0) and (j % 150 == 0):
-    #    Network.decrease_rate()
-    #    print "decrease"
+'''Print out output'''
+print (Network.Test(train_data, train_label))   # TRAINING ACCURACY
+print (Network.Test(test_data, test_label))     # TEST ACCURACY
+print (iteration)                               # NUMBER OF ITERATIONS
+print (learning_rate)                           # LEARNING RATE
