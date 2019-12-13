@@ -14,6 +14,8 @@ class Fully_Connected_Layer:
         '''Weight Initialization'''
         self.W1 = np.random.randn(self.InputDim, self.HiddenDim)
         self.W2 = np.random.randn(self.HiddenDim, self.OutputDim)
+        #self.W1 = np.zeros((self.InputDim, self.HiddenDim))
+        #self.W2 = np.zeros((self.HiddenDim, self.OutputDim))
 
         '''Step Initialization'''
         self.u = None
@@ -24,7 +26,7 @@ class Fully_Connected_Layer:
         '''Implement forward propagation'''
         self.u = Input.dot(self.W1)
         self.u_sig = sigmoid(self.u)
-        self.v = self.u.dot(self.W2)
+        self.v = self.u_sig.dot(self.W2)
         return sigmoid(self.v)
 
     def Backward(self, Input, Label, Output):
@@ -50,6 +52,8 @@ class Fully_Connected_Layer:
 
     def Train(self, Input, Label):
         Output = self.Forward(Input)
+        #loss = 0.5 * np.square(Output - Label).sum()
+        #print loss
         self.Backward(Input, Label, Output)
 
     def Test(self, Input, Label):
@@ -57,14 +61,20 @@ class Fully_Connected_Layer:
         assert (np.shape(Label) == np.shape(Output))
         count = 0.0
         for i in range(len(Label)):
-            if np.argmax(Label[i]) == np.argmax(Output[i]):
+            if np.argmax(Label[i, :]) == np.argmax(Output[i, :]):
                 count += 1
-        print count
         return count / len(Label)
+
+    def decrease_rate(self):
+        self.learning_rate *= 0.5
+
+    def PrintW(self):
+        print self.W1
+        print self.W2
 
 
 '''Construct a fully-connected network'''
-learning_rate = 5e-2
+learning_rate = 3e-2
 Network = Fully_Connected_Layer(learning_rate)
 
 '''Get input - train set and test set'''
@@ -73,32 +83,32 @@ f_test = open(sys.argv[2], 'r')
 train_set = np.array([list(map(float, line.split(','))) for line in f_train.readlines()])
 test_set =  np.array([list(map(float, line.split(','))) for line in f_test.readlines()])
 
-'''Train the network for the number of iterations'''
-'''Implement function to measure the accuracy'''
+'''Slice input into data and label'''
 train_data = train_set[:, :-1]
-train_label = np.zeros((1000,10))
-train_label[np.arange(1000), list(map(int,train_set[:, -1]))] = 1
+train_label = np.zeros((len(train_set),10))
+train_label[np.arange(len(train_set)), list(map(int,train_set[:, -1]))] = 1
 test_data = test_set[:, :-1]
 test_label = np.zeros((len(test_set), 10))
 test_label[np.arange(len(test_set)), list(map(int, test_set[:, -1]))] = 1
 
-epoch = 100
+'''Train the network for the number of iterations'''
+'''Implement function to measure the accuracy'''
+epoch = 1000
+batch_size = 100
 for j in range(epoch):
     #iteration = len(train_set)
-    iteration = 100
-    for i in range(iteration):
-        '''
-        train_data = train_set[:, :-1]
-        #train_data = train_data.reshape(1000, 784)
-        train_label = np.zeros((1000,10))
-        train_label[np.arange(1000), list(map(int,train_set[:, -1]))] = 1
-        '''
-        Network.Train(train_data, train_label)
+    #iteration = 1
+    #for _ in range(iteration):
+    i = 0
+    while (i < len(train_data)):
+        #for i in range(iteration):
+        Network.Train(train_data[i:(i+batch_size), :], train_label[i:(i+batch_size), :])
+        i += batch_size
 
     '''Test the network with test_set'''
-    '''
-    test_data = test_set[:, :-1]
-    test_label = np.zeros((len(test_set), 10))
-    test_label[np.arange(len(test_set)), list(map(int, test_set[:, -1]))] = 1
-    '''
     print "Accuracy %d: %f" % (j, Network.Test(test_data, test_label))
+    #print "Accuracy %d: %f" % (j, Network.Test(train_data, train_label))
+
+    #if (j != 0) and (j % 150 == 0):
+    #    Network.decrease_rate()
+    #    print "decrease"
