@@ -1,6 +1,9 @@
 import sys
 import numpy as np
 
+'''Seed to avoid fluctuation.'''
+np.random.seed(0)
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -76,7 +79,7 @@ test_label = np.zeros((len(test_set), 10))
 test_label[np.arange(len(test_set)), list(map(int, test_set[:, -1]))] = 1
 
 '''Train the network for the number of iterations'''
-iteration = 1000
+iteration = 700
 batch_size = 100
 for j in range(iteration):
     i = 0
